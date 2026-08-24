@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise 🎂</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff758c, #ff7eb3, #8e2de2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 650px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.step {
+  display: none;
+  text-align: center;
+}
+
+.step.active {
+  display: block;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+button {
+  border: none;
+  padding: 13px 25px;
+  margin: 10px 5px;
+  border-radius: 30px;
+  background: white;
+  color: #e83e8c;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.06);
+}
+
+.photo-preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.photo-preview img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 3px solid white;
+}
+
+.progress {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.final-name {
+  font-size: 48px;
+  color: #ffe066;
+  margin: 15px 0;
+}
+
+.final-message {
+  white-space: pre-line;
+  font-size: 20px;
+}
+
+.slideshow {
+  margin: 20px auto;
+  max-width: 450px;
+}
+
+.slideshow img {
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 4px solid white;
+}
+
+.hidden {
+  display: none;
+}
+
+.heart {
+  position: fixed;
+  font-size: 25px;
+  animation: fall 5s linear forwards;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.small {
+  font-size: 14px;
+  opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step1">
+
+    <div class="progress">Step 1 of 4 🎂</div>
+
+    <h1>🎉 Birthday Surprise</h1>
+
+    <p>
+      Create a special birthday page for someone you love.
+    </p>
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Enter their name"
+    >
+
+    <button onclick="nextStep(2)">
+      Continue ❤️
+    </button>
+
+  </div>
+
+
+  <!-- STEP 2 -->
+  <div class="step" id="step2">
+
+    <div class="progress">Step 2 of 4 💌</div>
+
+    <h2>Write Your Message</h2>
+
+    <textarea
+      id="message"
+      placeholder="Write your birthday message here..."
+    ></textarea>
+
+    <button onclick="nextStep(1)">
+      ← Back
+    </button>
+
+    <button onclick="nextStep(3)">
+      Continue 🎁
+    </button>
+
+  </div>
+
+
+  <!-- STEP 3 -->
+  <div class="step" id="step3">
+
+    <div class="progress">Step 3 of 4 📸</div>
+
+    <h2>Add Photos</h2>
+
+    <p>
+      Choose your favorite photos.
+    </p>
+
+    <input
+      type="file"
+      id="photos"
+      accept="image/*"
+      multiple
+      onchange="previewPhotos()"
+    >
+
+    <div class="photo-preview" id="photoPreview"></div>
+
+    <button onclick="nextStep(2)">
+      ← Back
+    </button>
+
+    <button onclick="nextStep(4)">
+      Preview 🎉
+    </button>
+
+  </div>
+
+
+  <!-- STEP 4 -->
+  <div class="step" id="step4">
+
+    <div class="progress">Step 4 of 4 🎁</div>
+
+    <h1>🎂 Happy Birthday</h1>
+
+    <div class="final-name" id="finalName">
+      Birthday!
+    </div>
+
+    <div class="slideshow" id="slideshow"></div>
+
+    <p class="final-message" id="finalMessage"></p>
+
+    <button onclick="startSurprise()">
+      🎉 Open Surprise
+    </button>
+
+    <button onclick="downloadBirthday()">
+      💾 Save Birthday Page
+    </button>
+
+    <button onclick="nextStep(3)">
+      ← Edit
+    </button>
+
+    <p class="small">
+      Save the downloaded files and send them to the birthday person.
+    </p>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let selectedPhotos = [];
+let currentPhoto = 0;
+
+
+/* STEP NAVIGATION */
+
+function nextStep(number) {
+
+  document.querySelectorAll(".step").forEach(step => {
+    step.classList.remove("active");
+  });
+
+  document.getElementById("step" + number).classList.add("active");
+
+  if (number === 4) {
+    createPreview();
+  }
+}
+
+
+/* PHOTO PREVIEW */
+
+function previewPhotos() {
+
+  const files = document.getElementById("photos").files;
+
+  selectedPhotos = Array.from(files);
+
+  const preview = document.getElementById("photoPreview");
+
+  preview.innerHTML = "";
+
+  selectedPhotos.forEach(file => {
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+
+      const img = document.createElement("img");
+
+      img.src = e.target.result;
+
+      preview.appendChild(img);
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+/* CREATE FINAL PREVIEW */
+
+function createPreview() {
+
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  document.getElementById("finalName").textContent =
+    name || "Birthday Star!";
+
+  document.getElementById("finalMessage").textContent =
+    message || "Wishing you a wonderful birthday filled with happiness, love and beautiful memories! ❤️";
+
+  const slideshow = document.getElementById("slideshow");
+
+  slideshow.innerHTML = "";
+
+  if (selectedPhotos.length > 0) {
+
+    const img = document.createElement("img");
+
+    slideshow.appendChild(img);
+
+    showPhoto(img);
+
+  } else {
+
+    slideshow.innerHTML =
+      "<div style='font-size:80px'>🎂</div>";
+
+  }
+}
+
+
+/* PHOTO SLIDESHOW */
+
+function showPhoto(img) {
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    img.src = e.target.result;
+  };
+
+  reader.readAsDataURL(selectedPhotos[currentPhoto]);
+
+}
+
+
+/* SURPRISE */
+
+function startSurprise() {
+
+  for (let i = 0; i < 40; i++) {
+
+    setTimeout(() => {
+
+      const heart = document.createElement("div");
+
+      heart.className = "heart";
+
+      heart.textContent =
+        ["❤️","💖","💕","🎉","✨","🎈"][Math.floor(Math.random() * 6)];
+
+      heart.style.left =
+        Math.random() * 100 + "vw";
+
+      heart.style.top = "-30px";
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 5000);
+
+    }, i * 100);
+
+  }
+
+  alert(
+    "🎉 Happy Birthday! 🎂❤️\n\n" +
+    "May all your wishes come true!"
+  );
+
+}
+
+
+/* AUTO SLIDESHOW */
+
+setInterval(() => {
+
+  if (
+    document.getElementById("step4").classList.contains("active") &&
+    selectedPhotos.length > 1
+  ) {
+
+    currentPhoto++;
+
+    if (currentPhoto >= selectedPhotos.length) {
+      currentPhoto = 0;
+    }
+
+    const img =
+      document.querySelector("#slideshow img");
+
+    if (img) {
+      showPhoto(img);
+    }
+
+  }
+
+}, 3000);
+
+
+/* SAVE INFORMATION */
+
+function downloadBirthday() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const message =
+    document.getElementById("message").value.trim();
+
+  const data = {
+    name: name,
+    message: message,
+    photos: selectedPhotos.map(file => file.name)
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+
+  a.href = url;
+
+  a.download =
+    (name || "birthday") + "-information.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  alert(
+    "Information saved! 🎉\n\n" +
+    "Keep this file together with your birthday page."
+  );
+
+}
+
+</script>
+
+</body>
+</html>
