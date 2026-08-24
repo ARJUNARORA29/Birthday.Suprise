@@ -134,8 +134,9 @@ button:hover {
   border: 4px solid white;
 }
 
-.hidden {
-  display: none;
+.small {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .heart {
@@ -143,6 +144,7 @@ button:hover {
   font-size: 25px;
   animation: fall 5s linear forwards;
   pointer-events: none;
+  z-index: 9999;
 }
 
 @keyframes fall {
@@ -155,11 +157,6 @@ button:hover {
     transform: translateY(110vh) rotate(360deg);
     opacity: 0;
   }
-}
-
-.small {
-  font-size: 14px;
-  opacity: 0.8;
 }
 </style>
 </head>
@@ -176,7 +173,7 @@ button:hover {
     <h1>🎉 Birthday Surprise</h1>
 
     <p>
-      Create a special birthday page for someone you love.
+      A special surprise for someone very special ❤️
     </p>
 
     <input
@@ -275,7 +272,7 @@ button:hover {
     </button>
 
     <p class="small">
-      Save the downloaded files and send them to the birthday person.
+      Made with ❤️ especially for you.
     </p>
 
   </div>
@@ -285,11 +282,82 @@ button:hover {
 
 <script>
 
+/* =========================================
+   MANNAT INFORMATION JSON
+   ========================================= */
+
+let birthdayData = {
+  "name": "MANNAT",
+  "message": "Happy Birthday, my love! ❤️🎂\n\nToday is all about celebrating the beautiful person you are. I feel incredibly lucky to have you in my life, and I hope you always know how special you are to me.\n\nYou bring so much happiness, warmth, and love into my world. Every moment with you becomes a memory I want to keep forever. 🥹❤️\n\nOn your birthday, I wish you endless happiness, success, peace, and everything your heart desires. I promise to keep making you smile, keep annoying you a little 😜, and keep loving you more with every passing day.\n\nHappy Birthday to my beautiful girl. 🎀❤️\n\nYou deserve the whole world, and I hope I can always be a part of making your world a little more beautiful.\n\nI love you. ❤️🎂✨",
+  "photos": [
+    "photo1.jpeg",
+    "photo2.jpeg",
+    "photo3.jpeg",
+    "photo4.jpeg",
+    "photo5.jpeg",
+    "photo6.jpeg",
+    "photo7.jpeg"
+  ]
+};
+
+
+/* =========================================
+   VARIABLES
+   ========================================= */
+
 let selectedPhotos = [];
 let currentPhoto = 0;
 
 
-/* STEP NAVIGATION */
+/* =========================================
+   LOAD JSON FILE
+   ========================================= */
+
+async function loadBirthdayData() {
+
+  try {
+
+    const response =
+      await fetch("MANNAT-information.json");
+
+    if (response.ok) {
+
+      const jsonData =
+        await response.json();
+
+      birthdayData = jsonData;
+
+    }
+
+  } catch (error) {
+
+    console.log(
+      "Using birthday information built into the website."
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD DATA
+   ========================================= */
+
+loadBirthdayData().then(() => {
+
+  document.getElementById("name").value =
+    birthdayData.name;
+
+  document.getElementById("message").value =
+    birthdayData.message;
+
+});
+
+
+/* =========================================
+   STEP NAVIGATION
+   ========================================= */
 
 function nextStep(number) {
 
@@ -297,35 +365,46 @@ function nextStep(number) {
     step.classList.remove("active");
   });
 
-  document.getElementById("step" + number).classList.add("active");
+  document
+    .getElementById("step" + number)
+    .classList.add("active");
 
   if (number === 4) {
     createPreview();
   }
+
 }
 
 
-/* PHOTO PREVIEW */
+/* =========================================
+   PHOTO PREVIEW
+   ========================================= */
 
 function previewPhotos() {
 
-  const files = document.getElementById("photos").files;
+  const files =
+    document.getElementById("photos").files;
 
-  selectedPhotos = Array.from(files);
+  selectedPhotos =
+    Array.from(files);
 
-  const preview = document.getElementById("photoPreview");
+  const preview =
+    document.getElementById("photoPreview");
 
   preview.innerHTML = "";
 
   selectedPhotos.forEach(file => {
 
-    const reader = new FileReader();
+    const reader =
+      new FileReader();
 
     reader.onload = function(e) {
 
-      const img = document.createElement("img");
+      const img =
+        document.createElement("img");
 
-      img.src = e.target.result;
+      img.src =
+        e.target.result;
 
       preview.appendChild(img);
 
@@ -338,110 +417,194 @@ function previewPhotos() {
 }
 
 
-/* CREATE FINAL PREVIEW */
+/* =========================================
+   CREATE FINAL PREVIEW
+   ========================================= */
 
 function createPreview() {
 
-  const name = document.getElementById("name").value.trim();
-  const message = document.getElementById("message").value.trim();
+  const name =
+    birthdayData.name ||
+    document.getElementById("name").value.trim();
+
+  const message =
+    birthdayData.message ||
+    document.getElementById("message").value.trim();
 
   document.getElementById("finalName").textContent =
-    name || "Birthday Star!";
+    name;
 
   document.getElementById("finalMessage").textContent =
-    message || "Wishing you a wonderful birthday filled with happiness, love and beautiful memories! ❤️";
+    message;
 
-  const slideshow = document.getElementById("slideshow");
+  currentPhoto = 0;
+
+  const slideshow =
+    document.getElementById("slideshow");
 
   slideshow.innerHTML = "";
 
+
+  /* USE PHOTOS FROM JSON */
+
+  if (
+    birthdayData.photos &&
+    birthdayData.photos.length > 0
+  ) {
+
+    const img =
+      document.createElement("img");
+
+    slideshow.appendChild(img);
+
+    showJsonPhoto(img);
+
+    return;
+
+  }
+
+
+  /* USE PHOTOS SELECTED FROM DEVICE */
+
   if (selectedPhotos.length > 0) {
 
-    const img = document.createElement("img");
+    const img =
+      document.createElement("img");
 
     slideshow.appendChild(img);
 
     showPhoto(img);
 
-  } else {
-
-    slideshow.innerHTML =
-      "<div style='font-size:80px'>🎂</div>";
+    return;
 
   }
+
+
+  slideshow.innerHTML =
+    "<div style='font-size:80px'>🎂</div>";
+
 }
 
 
-/* PHOTO SLIDESHOW */
+/* =========================================
+   SHOW JSON PHOTO
+   ========================================= */
+
+function showJsonPhoto(img) {
+
+  if (
+    !birthdayData.photos ||
+    birthdayData.photos.length === 0
+  ) {
+    return;
+  }
+
+  img.src =
+    birthdayData.photos[currentPhoto];
+
+  img.alt =
+    "MANNAT birthday memory";
+
+  img.onerror = function() {
+
+    console.error(
+      "Photo not found:",
+      birthdayData.photos[currentPhoto]
+    );
+
+    img.style.display = "none";
+
+  };
+
+}
+
+
+/* =========================================
+   SHOW UPLOADED PHOTO
+   ========================================= */
 
 function showPhoto(img) {
 
-  const reader = new FileReader();
+  const reader =
+    new FileReader();
 
   reader.onload = function(e) {
-    img.src = e.target.result;
+
+    img.src =
+      e.target.result;
+
   };
 
-  reader.readAsDataURL(selectedPhotos[currentPhoto]);
-
-}
-
-
-/* SURPRISE */
-
-function startSurprise() {
-
-  for (let i = 0; i < 40; i++) {
-
-    setTimeout(() => {
-
-      const heart = document.createElement("div");
-
-      heart.className = "heart";
-
-      heart.textContent =
-        ["❤️","💖","💕","🎉","✨","🎈"][Math.floor(Math.random() * 6)];
-
-      heart.style.left =
-        Math.random() * 100 + "vw";
-
-      heart.style.top = "-30px";
-
-      document.body.appendChild(heart);
-
-      setTimeout(() => {
-        heart.remove();
-      }, 5000);
-
-    }, i * 100);
-
-  }
-
-  alert(
-    "🎉 Happy Birthday! 🎂❤️\n\n" +
-    "May all your wishes come true!"
+  reader.readAsDataURL(
+    selectedPhotos[currentPhoto]
   );
 
 }
 
 
-/* AUTO SLIDESHOW */
+/* =========================================
+   AUTO SLIDESHOW
+   ========================================= */
 
 setInterval(() => {
 
   if (
-    document.getElementById("step4").classList.contains("active") &&
-    selectedPhotos.length > 1
+    !document
+      .getElementById("step4")
+      .classList.contains("active")
+  ) {
+    return;
+  }
+
+
+  /* JSON PHOTOS */
+
+  if (
+    birthdayData &&
+    birthdayData.photos &&
+    birthdayData.photos.length > 1
   ) {
 
     currentPhoto++;
 
-    if (currentPhoto >= selectedPhotos.length) {
+    if (
+      currentPhoto >=
+      birthdayData.photos.length
+    ) {
       currentPhoto = 0;
     }
 
     const img =
-      document.querySelector("#slideshow img");
+      document.querySelector(
+        "#slideshow img"
+      );
+
+    if (img) {
+      showJsonPhoto(img);
+    }
+
+    return;
+
+  }
+
+
+  /* DEVICE PHOTOS */
+
+  if (selectedPhotos.length > 1) {
+
+    currentPhoto++;
+
+    if (
+      currentPhoto >=
+      selectedPhotos.length
+    ) {
+      currentPhoto = 0;
+    }
+
+    const img =
+      document.querySelector(
+        "#slideshow img"
+      );
 
     if (img) {
       showPhoto(img);
@@ -452,43 +615,125 @@ setInterval(() => {
 }, 3000);
 
 
-/* SAVE INFORMATION */
+/* =========================================
+   SURPRISE ANIMATION
+   ========================================= */
+
+function startSurprise() {
+
+  for (
+    let i = 0;
+    i < 40;
+    i++
+  ) {
+
+    setTimeout(() => {
+
+      const heart =
+        document.createElement("div");
+
+      heart.className =
+        "heart";
+
+      heart.textContent =
+        [
+          "❤️",
+          "💖",
+          "💕",
+          "🎉",
+          "✨",
+          "🎈"
+        ][
+          Math.floor(
+            Math.random() * 6
+          )
+        ];
+
+      heart.style.left =
+        Math.random() * 100 + "vw";
+
+      heart.style.top =
+        "-30px";
+
+      document.body.appendChild(
+        heart
+      );
+
+      setTimeout(() => {
+        heart.remove();
+      }, 5000);
+
+    }, i * 100);
+
+  }
+
+
+  alert(
+    "🎉 Happy Birthday, MANNAT! 🎂❤️\n\n" +
+    "May all your wishes come true! ❤️✨"
+  );
+
+}
+
+
+/* =========================================
+   SAVE INFORMATION
+   ========================================= */
 
 function downloadBirthday() {
 
-  const name =
-    document.getElementById("name").value.trim();
-
-  const message =
-    document.getElementById("message").value.trim();
-
   const data = {
-    name: name,
-    message: message,
-    photos: selectedPhotos.map(file => file.name)
+
+    name:
+      birthdayData.name,
+
+    message:
+      birthdayData.message,
+
+    photos:
+      birthdayData.photos
+
   };
 
-  const blob = new Blob(
-    [JSON.stringify(data, null, 2)],
-    { type: "application/json" }
-  );
 
-  const url = URL.createObjectURL(blob);
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
+      }
+    );
 
-  const a = document.createElement("a");
 
-  a.href = url;
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const a =
+    document.createElement("a");
+
+  a.href =
+    url;
 
   a.download =
-    (name || "birthday") + "-information.json";
+    "MANNAT-information.json";
 
   a.click();
 
   URL.revokeObjectURL(url);
 
+
   alert(
-    "Information saved! 🎉\n\n" +
-    "Keep this file together with your birthday page."
+    "MANNAT's birthday information has been saved! 🎉"
   );
 
 }
